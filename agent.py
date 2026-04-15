@@ -106,28 +106,7 @@ tools = [
         }
     }
 ]
-def validate_and_fix_args(args):
-    try:
-        x = float(args.get("x", 0))
-        y = float(args.get("y", 0))
-        z = args.get("z", 0)
 
-        # Handle bad z cases
-        if isinstance(z, list):
-            z = float(z[0])   # take first value
-        else:
-            z = float(z)
-
-        # Clamp to safe workspace
-        x = np.clip(x, -1, 1)
-        y = np.clip(y, -1, 1)
-        z = np.clip(z, 0, 1.5)
-
-        return [x, y, z]
-
-    except Exception as e:
-        print("Bad tool args:", args, e)
-        return [0.4, -0.2, 0.9]  # safe fallback
 
 response = ollama.chat(
     model='qwen2:7b',
@@ -165,35 +144,30 @@ if 'tool_calls' in response['message']:
 # ---- simple agent ----
 
 def agent():
+    # ee_pos = p.getLinkState(pr2, ee_index)[0]
+
     response = ollama.chat(
         model='qwen2:7b',
         messages=[
-            {"role": "system", "content": "You control a robot arm. Always return valid numeric coordinates."},
-            {"role": "user", "content": "Move slightly upward."}
+            {"role": "system", "content": "You control a robot arm."},
+            {"role": "user", "content": " Move up."}
+            # {"role": "user", "content": f"Current position: {ee_pos}. Move slightly forward."}
         ],
         tools=tools
     )
 
-    tool_calls = response['message'].get('tool_calls', [])
+    tool_call = response['message']['tool_calls'][0]
+    args = tool_call['function']['arguments']
 
-    if not tool_calls:
-        return [0.4, -0.2, 0.9]
-
-    args = tool_calls[0]['function']['arguments']
-    return validate_and_fix_args(args)
+    return [args['x'], args['y'], args['z']]
 
 # target = agent()
 
-# for i in range(500):
 
-#     reach(target)
-
-#     p.stepSimulation()
-#     time.sleep(1/240)
 
 for i in range(500):
 
-    target = agent()   # 🔥 update every step
+    target = agent()   # update every step
 
     reach(target)
 
