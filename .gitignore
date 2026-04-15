@@ -1,0 +1,22 @@
+# # Virtual environment
+venv/
+.venv/
+
+*.pkl
+*.npz
+# assets/smpl_models/*.pkl
+# # Byte-compiled / optimized files
+# __pycache__/
+# *.py[cod]
+# *$py.class
+
+# # Assets (choose one)
+# assets/          # ← ignores the whole folder
+# # or
+# # assets/*       # ← ignores only contents
+
+# # Common ignores
+# *.log
+# .DS_Store
+# .vscode/
+# .idea/
