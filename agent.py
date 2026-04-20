@@ -22,8 +22,8 @@ pr2_urdf = os.path.join(ASSET_ROOT,"PR2","pr2_no_torso_lift_tall.urdf")
 pr2 = p.loadURDF(pr2_urdf, basePosition=[-0.8,-0.4,0], useFixedBase=True)
 
 
-# for i in range(p.getNumJoints(pr2)):
-#     print(i, p.getJointInfo(pr2,i)[1].decode())
+for i in range(p.getNumJoints(pr2)):
+    print(i, p.getJointInfo(pr2,i)[12].decode())
 
 # ---- find joints ----
 
